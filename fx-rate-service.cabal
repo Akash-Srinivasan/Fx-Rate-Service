@@ -1,0 +1,121 @@
+cabal-version:      3.0
+name:               fx-rate-service
+version:            0.1.0.0
+synopsis:           Multi-currency exchange rate service
+description:        A production-grade service for aggregating and serving foreign exchange rates
+license:            MIT
+author:             Your Name
+maintainer:         your.email@example.com
+category:           Finance
+build-type:         Simple
+
+common shared-properties
+  default-language: GHC2021
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Widentities
+    -Wincomplete-record-updates
+    -Wincomplete-uni-patterns
+    -Wmissing-export-lists
+    -Wmissing-home-modules
+    -Wpartial-fields
+    -Wredundant-constraints
+    -Wunused-packages
+  default-extensions:
+    OverloadedStrings
+    DeriveGeneric
+    DerivingStrategies
+    GeneralizedNewtypeDeriving
+    LambdaCase
+    RecordWildCards
+    TypeApplications
+
+library
+  import: shared-properties
+  hs-source-dirs: src
+  exposed-modules:
+    FXRate.Types
+    FXRate.External.ExchangeRateAPI
+    FXRate.External.ECB
+    FXRate.External.Types
+    FXRate.Database.Schema
+    FXRate.Database.Operations
+    FXRate.Core.Aggregation
+    FXRate.Core.Conversion
+    FXRate.API.Server
+    FXRate.Config
+  build-depends:
+    wai ^>=3.2.4,
+    base >= 4.16 && < 5,
+    -- HTTP & API
+    aeson >= 2.1,
+    http-conduit >= 2.3,
+    http-client >= 0.7,
+    http-types >= 0.12,
+    servant >= 0.19,
+    servant-server >= 0.19,
+    warp >= 3.3,
+    -- Database
+    postgresql-simple >= 0.6,
+    resource-pool >= 0.4,
+    -- Time handling
+    time >= 1.11,
+    -- Text & ByteString
+    text >= 2.0,
+    bytestring >= 0.11,
+    -- Parsing
+    attoparsec >= 0.14,
+    xml-conduit >= 1.9,
+    -- Scientific numbers for precision
+    scientific >= 0.3,
+    -- Async operations
+    async >= 2.2,
+    -- Configuration
+    envy >= 2.1,
+    -- Logging
+    katip >= 0.8,
+    -- Error handling
+    either >= 5.0,
+    -- Containers
+    containers >= 0.6,
+    unordered-containers >= 0.2,
+    vector >= 0.13,
+    -- Utilities
+    mtl >= 2.2,
+    transformers >= 0.5
+
+executable fx-rate-service
+  import: shared-properties
+  main-is: Main.hs
+  hs-source-dirs: app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+    warp ^>=3.4.9,
+    base,
+    fx-rate-service
+
+executable fx-rate-fetcher
+  import: shared-properties
+  main-is: Fetcher.hs
+  hs-source-dirs: app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+    base,
+    fx-rate-service,
+    time
+
+test-suite fx-rate-service-test
+  import: shared-properties
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Spec.hs
+  other-modules:
+    AggregationSpec
+    ConversionSpec
+  build-depends:
+    base,
+    fx-rate-service,
+    hspec >= 2.9,
+    QuickCheck >= 2.14
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N

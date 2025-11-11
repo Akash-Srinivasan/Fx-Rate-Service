@@ -1,0 +1,35 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+dist/
+dist-newstyle/
+.stack-work/
+*.o
+*.hi
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Env files
+.env
+
+# Logs
+*.log
+
+# Documentation (not needed in container)
+README.md
+SETUP.md
+*.md
+
+# Tests (already built)
+test/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

@@ -1,0 +1,47 @@
+# Haskell
+dist/
+dist-newstyle/
+cabal-dev/
+.cabal-sandbox/
+cabal.sandbox.config
+*.o
+*.hi
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.virtualenv
+.hsenv
+.hpc
+.stack-work/
+*.prof
+*.aux
+*.hp
+*.eventlog
+
+# GHC
+.ghc.environment.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.envrc
+
+# Database
+*.db
+*.sqlite
+postgres-data/
+
+# Logs
+*.log
+
+# Build artifacts
+result
+result-*

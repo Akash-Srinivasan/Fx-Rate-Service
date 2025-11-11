@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    environment:
+      POSTGRES_DB: fxrates
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    command: fx-rate-service
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: fxrates
+      DB_USER: postgres
+      DB_PASSWORD: password
+      LOG_LEVEL: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  fetcher:
+    build: .
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    command: fx-rate-fetcher
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: fxrates
+      DB_USER: postgres
+      DB_PASSWORD: password
+      LOG_LEVEL: INFO
+      FETCH_INTERVAL: 15  # Fetch every 15 minutes
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
