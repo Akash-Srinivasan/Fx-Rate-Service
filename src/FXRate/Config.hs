@@ -28,7 +28,7 @@ defaultConfig = Config
       { dbHost = "localhost"
       , dbPort = 5432
       , dbName = "fxrates"
-      , dbUser = "postgres"
+      , dbUser = ""  -- Empty string uses current user
       , dbPassword = ""
       }
   , cfgLogLevel = "INFO"

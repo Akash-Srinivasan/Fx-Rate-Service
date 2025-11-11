@@ -35,7 +35,6 @@ import Servant
   )
 import Data.Scientific
 import Data.Time
-import Data.Aeson.Types (ToJSON(toJSON))
 
 -- | API definition
 type API = 

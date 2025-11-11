@@ -1,0 +1,15 @@
+[phases.setup]
+nixPkgs = ["ghc", "cabal-install", "postgresql", "zlib"]
+
+[phases.build]
+cmds = [
+    "cabal update",
+    "cabal build --only-dependencies",
+    "cabal build",
+    "mkdir -p /app/bin",
+    "cp $(find dist-newstyle -name 'fx-rate-service' -type f -executable | head -1) /app/bin/fx-rate-service",
+    "cp $(find dist-newstyle -name 'fx-rate-fetcher' -type f -executable | head -1) /app/bin/fx-rate-fetcher"
+]
+
+[phases.start]
+cmd = "/app/bin/fx-rate-service"

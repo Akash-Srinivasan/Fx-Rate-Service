@@ -27,12 +27,18 @@ import Network.HTTP.Simple
   )
 import System.Timeout (timeout)
 
+<<<<<<< HEAD
 -- | Base URL for ExchangeRate-API
 baseURL :: String
 baseURL = "https://api.exchangerate-api.com/v4/latest/"
 
 -- | Fetch exchange rates for a base currency
 -- Free tier doesn't require API key, but has rate limits
+=======
+baseURL :: String
+baseURL = "https://api.exchangerate-api.com/v4/latest/"
+
+>>>>>>> 8246ffb (init commit)
 fetchRates :: Currency -> IO (Either String [ExchangeRate])
 fetchRates (Currency base) = do
   let url = baseURL ++ T.unpack base
