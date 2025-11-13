@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["ghc", "cabal-install", "postgresql", "zlib"]
+nixPkgs = ["ghc", "cabal-install", "postgresql_15", "zlib"]
 
 [phases.build]
 cmds = [
