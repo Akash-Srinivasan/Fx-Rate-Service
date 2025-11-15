@@ -1,0 +1,79 @@
+# Multi-stage Dockerfile optimized for Railway deployment
+# This reduces final image size while maintaining all functionality
+
+# ============================================================
+# Stage 1: Build Stage
+# ============================================================
+FROM haskell:9.6.3 AS builder
+
+WORKDIR /build
+
+# Install system dependencies needed for building
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy cabal configuration first (for better layer caching)
+COPY fx-rate-service.cabal cabal.project* ./
+
+# Update package list and build dependencies only
+RUN cabal update && \
+    cabal build --only-dependencies -j4
+
+# Copy source code
+COPY . .
+
+# Build the application with optimizations
+RUN cabal build all --enable-optimization=2 && \
+    # Find and copy executables to known location
+    mkdir -p /build/bin && \
+    cp $(find dist-newstyle -name 'fx-rate-service' -type f -executable) /build/bin/fx-rate-service && \
+    cp $(find dist-newstyle -name 'fx-rate-fetcher' -type f -executable) /build/bin/fx-rate-fetcher && \
+    # Verify executables exist and are executable
+    ls -lh /build/bin/ && \
+    /build/bin/fx-rate-service --help || true
+
+# ============================================================
+# Stage 2: Runtime Stage (minimal)
+# ============================================================
+FROM debian:bookworm-slim
+
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    postgresql-client \
+    ca-certificates \
+    netbase \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN useradd -m -u 1001 -s /bin/bash fxrate
+
+WORKDIR /app
+
+# Copy executables from builder
+COPY --from=builder /build/bin/fx-rate-service /usr/local/bin/fx-rate-service
+COPY --from=builder /build/bin/fx-rate-fetcher /usr/local/bin/fx-rate-fetcher
+
+# Copy startup script
+COPY start-railway.sh /usr/local/bin/start-railway.sh
+RUN chmod +x /usr/local/bin/start-railway.sh
+
+# Set ownership
+RUN chown -R fxrate:fxrate /app
+
+# Switch to non-root user
+USER fxrate
+
+# Expose API port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Default command (Railway can override this)
+CMD ["/usr/local/bin/start-railway.sh", "fx-rate-service"]
