@@ -1,26 +1,7 @@
 # FX Rate Service 💱
 
-A production-grade multi-currency exchange rate service built with Haskell. Aggregates rates from multiple sources, provides historical data, and enables real-time monitoring.
+Multi-currency exchange rate service built with Haskell. Aggregates rates from multiple sources, provides historical data, and enables real-time monitoring.
 
-## Features
-
-- 🔄 **Multi-Source Aggregation**: Fetches rates from multiple APIs (ExchangeRate-API, ECB)
-- 📊 **Weighted Averaging**: Combines rates based on source confidence
-- 💾 **Historical Storage**: PostgreSQL database with time-series optimization
-- 🚀 **REST API**: Clean, documented endpoints
-- ⚡ **Real-time Updates**: Scheduled fetching every 15 minutes
-- 🔒 **Type Safety**: Leverages Haskell's type system for correctness
-- 🧪 **Tested**: Comprehensive test suite
-
-## Why Haskell?
-
-This project demonstrates why Haskell is excellent for financial systems:
-
-- **Type Safety**: Currency pairs can't be created with same currencies
-- **No Runtime Errors**: Catch bugs at compile time
-- **Precise Arithmetic**: Using `Scientific` type for accurate decimal handling
-- **Concurrent Operations**: Easy async fetching from multiple sources
-- **Pure Functions**: Conversion and aggregation logic is testable and reliable
 
 ## Quick Start
 
@@ -75,34 +56,7 @@ cabal run fx-rate-fetcher
 
 The API will be available at `http://localhost:8080`
 
-## Project Structure
 
-```
-fx-rate-service/
-├── src/
-│   └── FXRate/
-│       ├── Types.hs              # Core types (Currency, CurrencyPair, etc.)
-│       ├── External/
-│       │   ├── Types.hs          # API response types
-│       │   ├── ExchangeRateAPI.hs # ExchangeRate-API client
-│       │   └── ECB.hs            # European Central Bank client
-│       ├── Database/
-│       │   ├── Schema.hs         # Database schema & migrations
-│       │   └── Operations.hs    # CRUD operations
-│       ├── Core/
-│       │   ├── Aggregation.hs   # Rate aggregation logic
-│       │   └── Conversion.hs    # Currency conversion with fees
-│       ├── API/
-│       │   └── Server.hs         # REST API (Servant)
-│       └── Config.hs             # Configuration management
-├── app/
-│   ├── Main.hs                   # API server executable
-│   └── Fetcher.hs                # Rate fetcher cron job
-├── test/
-│   ├── Spec.hs
-│   ├── AggregationSpec.hs        # Aggregation tests
-│   └── ConversionSpec.hs         # Conversion tests
-└── fx-rate-service.cabal         # Project configuration
 ```
 
 ## API Endpoints
