@@ -1,5 +1,5 @@
 # Single-stage build - using full haskell image (has PostgreSQL libs)
-FROM haskell:9.6.3
+FROM haskell:9.6-bookworm
 
 WORKDIR /app
 

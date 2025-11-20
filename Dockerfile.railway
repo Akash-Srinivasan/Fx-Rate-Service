@@ -4,7 +4,7 @@
 # ============================================================
 # Stage 1: Build Stage
 # ============================================================
-FROM haskell:9.6.3 AS builder
+FROM haskell:9.6-bookworm AS builder
 
 WORKDIR /build
 
